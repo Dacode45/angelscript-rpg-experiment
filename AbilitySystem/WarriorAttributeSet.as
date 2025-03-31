@@ -1,3 +1,3 @@
-class UWarriorAttributeSet : UAttributeSet
+class UWarriorAttributeSet : UAngelscriptAttributeSet
 {
 }

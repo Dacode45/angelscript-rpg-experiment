@@ -23,10 +23,31 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 	UFUNCTION(BlueprintOverride)
 	void ConstructionScript()
 	{
-		Debug::Print("In Constructor");
 		FollowCamera.AttachToComponent(CameraBoom);
 
 		CapsuleComponent.SetCapsuleSize(42.f, 96.f);
+	}
+
+	UFUNCTION()
+	void OnStartupDataLoaded(UObject LoadedObject) {
+		Debug::Print("Startup data loaded");
+		auto startupdata = Cast<UDataAsset_StartupDataBase>(LoadedObject);
+		startupdata.GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+	}
+
+	UFUNCTION(BlueprintOverride)
+	void Possessed(AController NewController)
+	{
+		Super::Possessed(NewController);
+
+		if (!CharacterStartupData.IsNull())
+		{
+			CharacterStartupData.LoadAsync(FOnSoftObjectLoaded(this, n"OnStartupDataLoaded"));
+		}
+		else
+		{
+			OnStartupDataLoaded(CharacterStartupData.Get());
+		}
 	}
 
 	// UFUNCTION(BlueprintOverride)
