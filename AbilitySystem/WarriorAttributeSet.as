@@ -1,0 +1,3 @@
+class UWarriorAttributeSet : UAttributeSet
+{
+}
