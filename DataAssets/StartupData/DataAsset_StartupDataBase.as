@@ -22,7 +22,6 @@ class UDataAsset_StartupDataBase : UDataAsset
 		for (auto Ability : InAbilitiesToGive)
 		{
 			auto d = Ability.GetDefaultObject();
-			Debug::Print(f"Giving Ability {Ability}");
 			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability);
 
 			AbilitySpec.SourceObject = InWarriorAbilitySystem.AbilityActorInfo.AvatarActor;

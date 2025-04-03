@@ -9,6 +9,9 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 	UPROPERTY(EditDefaultsOnly, Category = "Character Data")
 	UDataAsset_InputConfig InputConfigDataAsset;
 
+	UPROPERTY(DefaultComponent, VisibleDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	UHeroCombatComponent CombatComponent;
+
 	default CameraBoom.TargetArmLength = 200.0f;
 	default CameraBoom.SocketOffset = FVector(0.f, 55.f, 65.f);
 	default CameraBoom.bUsePawnControlRotation = true;
@@ -30,7 +33,6 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 
 	UFUNCTION()
 	void OnStartupDataLoaded(UObject LoadedObject) {
-		Debug::Print("Startup data loaded");
 		auto startupdata = Cast<UDataAsset_StartupDataBase>(LoadedObject);
 		startupdata.GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
 	}
@@ -55,7 +57,6 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 	{
 		check(InputConfigDataAsset != nullptr);
 		check(PlayerInputComponent != nullptr);
-		Debug::Print("In SetupPlayerInputComponent");
 
 		ULocalPlayer LocalPlayer = (Cast<APlayerController>(GetController())).GetLocalPlayer();
 
@@ -78,6 +79,11 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 			GameplayTags::InputTag_Look,
 			ETriggerEvent::Triggered,
 			FEnhancedInputActionHandlerDynamicSignature(this, n"Input_Look"));
+
+		WarriorInputComponent.BindAbilityInputAction(
+			InputConfigDataAsset,
+			FEnhancedInputActionHandlerDynamicSignature(this, n"Input_AbilityInputPressed"),
+			FEnhancedInputActionHandlerDynamicSignature(this, n"Input_AbilityInputReleased"));
 	}
 
 	UFUNCTION()
@@ -110,5 +116,19 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 		{
 			AddControllerPitchInput(LookDirection.Y);
 		}
+	}
+
+	UFUNCTION()
+	void Input_AbilityInputPressed(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction) {
+		UInputActionWithTag SourceActionWithTag = Cast<UInputActionWithTag>(SourceAction);
+
+		WarriorAbilitySystemComponent.OnAbilityInputPressed(SourceActionWithTag.InputTag);
+	}
+
+	UFUNCTION()
+	void Input_AbilityInputReleased(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction) {
+		UInputActionWithTag SourceActionWithTag = Cast<UInputActionWithTag>(SourceAction);
+
+		WarriorAbilitySystemComponent.OnAbilityInputReleased(SourceActionWithTag.InputTag);
 	}
 }

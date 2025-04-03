@@ -1,5 +1,3 @@
-
-// Initialized by the Controller
 class UWarriorInputComponent : UEnhancedInputComponent
 {
 	void BindNativeInputAction(UDataAsset_InputConfig InInputConfig,
@@ -16,6 +14,21 @@ class UWarriorInputComponent : UEnhancedInputComponent
 		else
 		{
 			Debug::Print("Input action not found.");
+		}
+	}
+
+	void BindAbilityInputAction(UDataAsset_InputConfig InInputConfig,
+								FEnhancedInputActionHandlerDynamicSignature PressedFunc, FEnhancedInputActionHandlerDynamicSignature ReleasedFunc)
+	{
+		check(InInputConfig != nullptr);
+
+		for (FWarriorInputActionConfig config : InInputConfig.AbilityInputActions)
+		{
+			if (!config.IsValid())
+				continue;
+
+			BindAction(config.InputAction, ETriggerEvent::Started, PressedFunc);
+			BindAction(config.InputAction, ETriggerEvent::Completed, ReleasedFunc);
 		}
 	}
 }

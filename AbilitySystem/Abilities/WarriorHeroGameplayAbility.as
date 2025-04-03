@@ -5,7 +5,7 @@ class UWarriorHeroGameplayAbility : UWarriorGameplayAbility
 	TWeakObjectPtr<AWarriorHeroCharacter> CachedWarriorHeroCharacter;
 	TWeakObjectPtr<AWarriorHeroController> CachedWarriorHeroController;
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Warrior|Ability")
 	AWarriorHeroCharacter GetHeroCharacterFromActorInfo() {
 		if (!CachedWarriorHeroCharacter.IsValid())
 		{
@@ -15,7 +15,7 @@ class UWarriorHeroGameplayAbility : UWarriorGameplayAbility
 		return CachedWarriorHeroCharacter;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Warrior|Ability")
 	AWarriorHeroController GetHeroControllerFromActorInfo(){
 		if (!CachedWarriorHeroController.IsValid())
 		{

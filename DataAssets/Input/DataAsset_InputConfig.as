@@ -1,15 +1,25 @@
-USTRUCT()
-struct FWarriorInputActionConfig
+class UInputActionWithTag : UInputAction
 {
-
 	UPROPERTY()
 	FGameplayTag InputTag;
 
+}
+
+USTRUCT()
+struct FWarriorInputActionConfig
+{
+	FGameplayTag GetInputTag() const property {
+		if (InputAction == nullptr)
+			return FGameplayTag();
+
+		return InputAction.InputTag;
+	}
+
 	UPROPERTY()
-	UInputAction InputAction;
+	UInputActionWithTag InputAction;
 
 	bool IsValid() const {
-		return InputTag.IsValid() && InputAction != nullptr;
+		return InputAction != nullptr && InputAction.InputTag.IsValid();
 	}
 }
 
@@ -25,14 +35,21 @@ class UDataAsset_InputConfig : UDataAsset
 	UPROPERTY()
 	TArray<FWarriorInputActionConfig> AbilityInputActions;
 
-	UInputAction FindNativeInputActionByTag(FGameplayTag InInputTag)
+	UInputActionWithTag FindNativeInputActionByTag(FGameplayTag InInputTag)
 	{
-		for (FWarriorInputActionConfig& config : NativeInputActions)
-		{
-			if (config.InputTag == InInputTag)
-			{
-				check(config.IsValid());
+		return FindInputActionByTag(NativeInputActions, InInputTag);
+	}
 
+	UInputActionWithTag FindAbilityInputActionByTag(FGameplayTag InInputTag)
+	{
+		return FindInputActionByTag(AbilityInputActions, InInputTag);
+	}
+
+	UInputActionWithTag FindInputActionByTag(TArray<FWarriorInputActionConfig> Actions, FGameplayTag InInputTag) {
+		for (FWarriorInputActionConfig config : Actions)
+		{
+			if (config.IsValid() && config.InputAction.InputTag == InInputTag)
+			{
 				return config.InputAction;
 			}
 		}
