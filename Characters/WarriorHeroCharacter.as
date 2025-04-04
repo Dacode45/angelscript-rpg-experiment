@@ -131,4 +131,9 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 
 		WarriorAbilitySystemComponent.OnAbilityInputReleased(SourceActionWithTag.InputTag);
 	}
+
+	UPawnCombatComponent GetPawnCombatComponent() override
+	{
+		return CombatComponent;
+	}
 }

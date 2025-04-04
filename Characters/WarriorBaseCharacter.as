@@ -20,4 +20,11 @@ class AWarriorBaseCharacter : AAngelscriptGASCharacter
 			auto _ = ensure(!CharacterStartupData.IsNull(), "Forgot to assign startup data");
 		}
 	}
+
+	UPawnCombatComponent GetPawnCombatComponent()
+	{
+		check(false, "Subclass must override this");
+
+		return nullptr;
+	}
 }

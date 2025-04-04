@@ -25,6 +25,30 @@ class UWarriorHeroGameplayAbility : UWarriorGameplayAbility
 		return CachedWarriorHeroController;
 	}
 
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponDamage, FGameplayTag CurrentAttackTypeTag, int InUsedComboCount) {
+		check(EffectClass != nullptr);
+
+		FGameplayEffectContextHandle ContextHandle = GetWarriorAbilitySystemComponentFromActorInfo().MakeEffectContext();
+		ContextHandle.SetAbility(this);
+		ContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
+		ContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());
+
+		FGameplayEffectSpecHandle SpecHandle = GetWarriorAbilitySystemComponentFromActorInfo().MakeOutgoingSpec(
+			EffectClass,
+			GetAbilityLevel(),
+			ContextHandle);
+
+		SpecHandle.GetSpec().SetByCallerMagnitude(GameplayTags::Shared_SetByCaller_BaseDamage, InWeaponDamage);
+
+		if (CurrentAttackTypeTag.IsValid())
+		{
+			SpecHandle.Spec.SetByCallerMagnitude(CurrentAttackTypeTag, InUsedComboCount);
+		}
+
+		return SpecHandle;
+	}
+
 	// UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
 	// UHeroCombatComponent GetHeroCombatComponentFromActorInfo();
 }

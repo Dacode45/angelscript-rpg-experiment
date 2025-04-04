@@ -1,13 +1,6 @@
 namespace WarriorFunctionLibrary
 {
 
-	UENUM()
-	enum EWarriorConfirmType
-	{
-		Yes,
-		No
-	}
-
 	UFUNCTION(Category = "Warrior|FunctionLibrary")
 	UWarriorAbilitySystemComponent GetWarriorAbilitySystemComponentFromActor(AActor InActor)
 	{
@@ -43,6 +36,26 @@ namespace WarriorFunctionLibrary
 	UFUNCTION(Category = "Warrior|FunctionLibrary", Meta = (DisplayName = "Does Actor Have Tag", ExpandEnumAsExecs = "OutConfirmType"))
 	void BP_DoesActorHaveTag(AActor InActor, FGameplayTag TagToCheck, EWarriorConfirmType&out OutConfirmType) {
 		OutConfirmType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EWarriorConfirmType::Yes : EWarriorConfirmType::No;
+	}
+
+	UPawnCombatComponent GetPawnCombatComponent(AActor InActor) {
+		AWarriorBaseCharacter Character = Cast<AWarriorBaseCharacter>(InActor);
+
+		if (Character != nullptr)
+		{
+			return Character.GetPawnCombatComponent();
+		}
+
+		return nullptr;
+	}
+
+	UFUNCTION(Category = "Warrior|FunctionLibrary", Meta = (DisplayName = "Get Pawn Combat Component", ExpandEnumAsExecs = "OutValidType"))
+	UPawnCombatComponent BP_GetPawnCombatComponent(AActor InActor, EWarriorValidType&out OutValidType) {
+		UPawnCombatComponent CombatComponent = GetPawnCombatComponent(InActor);
+
+		OutValidType = CombatComponent != nullptr ? EWarriorValidType::Valid : EWarriorValidType::InValid;
+
+		return CombatComponent;
 	}
 
 }

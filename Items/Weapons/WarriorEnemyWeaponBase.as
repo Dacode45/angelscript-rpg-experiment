@@ -1,0 +1,3 @@
+class AWarriorEnemyWeaponBase : AWarriorWeaponBase
+{
+}

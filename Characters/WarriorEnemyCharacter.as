@@ -18,4 +18,30 @@ class AWarriorEnemyCharacter : AWarriorBaseCharacter
 		CharacterMovement.MaxWalkSpeed = 300.f;
 		CharacterMovement.BrakingDecelerationWalking = 1000.f;
 	}
+
+	UFUNCTION(BlueprintOverride)
+	void Possessed(AController NewController)
+	{
+		Super::Possessed(NewController);
+		InitEnemyStartupData();
+	}
+
+	void InitEnemyStartupData() {
+
+		if (CharacterStartupData.IsNull())
+			return;
+
+		CharacterStartupData.LoadAsync(FOnSoftObjectLoaded(this, n"OnStartupDataLoaded"));
+	}
+
+	UFUNCTION()
+	void OnStartupDataLoaded(UObject LoadedObject) {
+		auto startupdata = Cast<UDataAsset_StartupDataBase>(LoadedObject);
+		startupdata.GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+	}
+
+	UPawnCombatComponent GetPawnCombatComponent() override
+	{
+		return EnemyCombatComponent;
+	}
 }
