@@ -27,7 +27,7 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 	}
 
 	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor TargetActor, FGameplayEffectSpecHandle InSpecHandle) {
-		UAbilitySystemComponent TargetASC = AbilitySystem::GetAbilitySystemComponent(TargetActor);
+		UAngelscriptAbilitySystemComponent TargetASC = Cast<UAngelscriptAbilitySystemComponent>(AbilitySystem::GetAbilitySystemComponent(TargetActor));
 
 		if (TargetASC == nullptr)
 			return FActiveGameplayEffectHandle();
@@ -35,9 +35,17 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 		check(TargetASC != nullptr);
 		check(InSpecHandle.IsValid());
 
-		return GetWarriorAbilitySystemComponentFromActorInfo().ApplyGameplayEffectSpecToTarget(
-			InSpecHandle,
-			TargetASC);
+		// return GetWarriorAbilitySystemComponentFromActorInfo().ApplyGameplayEffectSpecToTarget(
+		// 	InSpecHandle,
+		// 	TargetASC);
+
+		// TargetASC.SetAttributeBaseValue(UWarriorAttributeSet::StaticClass(), n"CurrentHealth", 31);
+
+		return TargetASC.ApplyGameplayEffectSpecToSelf(InSpecHandle);
+
+		// return GetWarriorAbilitySystemComponentFromActorInfo().ApplyGameplayEffectSpecToTarget(
+		// 	InSpecHandle,
+		// 	TargetASC);
 	}
 
 	UFUNCTION(Category = "Warrior|Ability", Meta = (DisplayName = "Apply Gaemplay Effect Spec Handle To Target Actor", ExpandEnumAsExecs = "OutSuccesstype"))
