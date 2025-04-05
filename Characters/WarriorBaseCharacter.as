@@ -29,7 +29,7 @@ class AWarriorBaseCharacter : AAngelscriptGASCharacter
 			auto _ = ensure(!CharacterStartupData.IsNull(), "Forgot to assign startup data");
 
 			WarriorAbilitySystemComponent.OnAttributeChanged.AddUFunction(this, n"OnAttributeChanged");
-			WarriorAbilitySystemComponent.SetAttributeBaseValue(UWarriorAttributeSet, n"MaxHealth", 1030);
+			// WarriorAbilitySystemComponent.SetAttributeBaseValue(UWarriorAttributeSet, n"MaxHealth", 133);
 		}
 	}
 

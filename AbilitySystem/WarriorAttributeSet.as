@@ -32,9 +32,52 @@ class UWarriorAttributeSet : UAngelscriptAttributeSet
 		DamageTaken.Initialize(0.f);
 	}
 
-	// UFUNCTION(BlueprintOverride)
-	// void PreAttributeChange(FGameplayAttribute Attribute, float32& NewValue)
-	// {
-	// 	Debug::Print(f"Attribute Changing {Attribute.AttributeName}");
-	// }
+	UFUNCTION(BlueprintOverride)
+	void PostGameplayEffectExecute(FGameplayEffectSpec EffectSpec,
+								   FGameplayModifierEvaluatedData& EvaluatedData,
+								   UAngelscriptAbilitySystemComponent AbilitySystemComponent)
+	{
+
+		if (EvaluatedData.Attribute.AttributeName == UAngelscriptAttributeSet::GetGameplayAttribute(UWarriorAttributeSet, n"CurrentHealth").AttributeName)
+
+		{
+
+			const float NewCurrentHealth = Math::Clamp(CurrentHealth.CurrentValue, 0.f, MaxHealth.CurrentValue);
+
+			CurrentHealth.SetCurrentValue(NewCurrentHealth);
+		}
+
+		if (EvaluatedData.Attribute.AttributeName == UAngelscriptAttributeSet::GetGameplayAttribute(UWarriorAttributeSet, n"CurrentRage").AttributeName)
+
+		{
+
+			const float NewCurrentRage = Math::Clamp(CurrentRage.CurrentValue, 0.f, MaxRage.CurrentValue);
+
+			CurrentRage.SetCurrentValue(NewCurrentRage);
+		}
+
+		if (EvaluatedData.Attribute.AttributeName == UAngelscriptAttributeSet::GetGameplayAttribute(UWarriorAttributeSet, n"DamageTaken").AttributeName)
+
+		{
+
+			const float OldHealth = CurrentHealth.CurrentValue;
+
+			const float DamageDone = DamageTaken.CurrentValue;
+
+			const float NewCurrentHealth = Math::Clamp(OldHealth - DamageDone, 0.f, MaxHealth.CurrentValue);
+
+			CurrentHealth.SetCurrentValue(NewCurrentHealth);
+
+			Debug::Print(f"Old Health: {OldHealth}, Damage Done: {DamageDone}, NewCurrentHealth: {NewCurrentHealth}");
+
+			// TODO::Notify the UI
+
+			// TODO::Handle character death
+
+			if (NewCurrentHealth == 0.f)
+
+			{
+			}
+		}
+	}
 }

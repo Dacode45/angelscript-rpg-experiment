@@ -33,6 +33,9 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 	void Execute(FGameplayEffectCustomExecutionParameters ExecutionParams,
 				 FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 	{
+		auto ascFound = ExecutionParams.TargetAbilitySystemComponent.GetAttributeSet(UWarriorAttributeSet::StaticClass());
+
+		CppDebug::Print(f"ABS { ascFound.GetName()}", FColor::Blue);
 
 		FGameplayEffectSpec EffectSpec = ExecutionParams.OwningSpec;
 
@@ -40,6 +43,7 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 		EvaluateParameters.SetCapturedSourceTagsFromSpec(EffectSpec);
 
 		float32 SourceAttackPower = 0.f;
+
 		// float& SourceAttackPowerRef = &SourceAttackPower;
 		bool AttemptResultAP = ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 			DamageCaptureCalc::DamageCapture.AttackPowerCaptureDefinition, EvaluateParameters, SourceAttackPower);
@@ -50,8 +54,8 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 		}
 
 		float BaseDamage = 0.f;
-		int32 UsedLightAttackComboCount = 0;
-		int32 UsedHeavyAttackComboCount = 0;
+		float UsedLightAttackComboCount = 0;
+		float UsedHeavyAttackComboCount = 0;
 
 		for (auto TagMagnitude : EffectSpec.SetByCallerTagMagnitudes)
 		{
