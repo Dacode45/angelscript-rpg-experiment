@@ -1,15 +1,21 @@
 class AWarriorBaseCharacter : AAngelscriptGASCharacter
 {
-	UPROPERTY(DefaultComponent, Category = "AbilitySystem")
-	UWarriorAbilitySystemComponent WarriorAbilitySystemComponent;
 
 	UPROPERTY(Category = "CharacterData")
 	TSoftObjectPtr<UDataAsset_StartupDataBase> CharacterStartupData;
 
-	UFUNCTION(BlueprintOverride)
-	void BeginPlay(){
-		AbilitySystem.RegisterAttributeSet(UWarriorAttributeSet::StaticClass());
+	UAngelscriptAbilitySystemComponent GetWarriorAbilitySystemComponent() const property {
+		return AbilitySystem;
 	}
+
+	// UFUNCTION(BlueprintOverride)
+	// void ConstructionScript(){
+	// 	AbilitySystem = UWarriorAbilitySystemComponent::Create(this);
+	// }
+
+	// UWarriorAbilitySystemComponent GetWarriorAbilitySystemComponent() const property {
+	// 	return Cast<UWarriorAbilitySystemComponent>(AbilitySystem);
+	// }
 
 	UFUNCTION(BlueprintOverride)
 	void Possessed(AController NewController)
@@ -17,8 +23,20 @@ class AWarriorBaseCharacter : AAngelscriptGASCharacter
 		if (WarriorAbilitySystemComponent != nullptr)
 		{
 			WarriorAbilitySystemComponent.InitAbilityActorInfo(this, this);
+			auto set = WarriorAbilitySystemComponent.RegisterAttributeSet(UWarriorAttributeSet::StaticClass());
+			check(set != nullptr, "Failed to register attributes");
+
 			auto _ = ensure(!CharacterStartupData.IsNull(), "Forgot to assign startup data");
+
+			WarriorAbilitySystemComponent.OnAttributeChanged.AddUFunction(this, n"OnAttributeChanged");
+			WarriorAbilitySystemComponent.SetAttributeBaseValue(UWarriorAttributeSet, n"MaxHealth", 1030);
 		}
+	}
+
+	// THIS NEVER GETS CALLED ????
+	UFUNCTION()
+	void OnAttributeChanged(const FAngelscriptModifiedAttribute&in AttributeChangeData){
+		Debug::Print(f"Attribute Changed: {AttributeChangeData.Name}: {AttributeChangeData.OldValue} -> {AttributeChangeData.NewValue}");
 	}
 
 	UPawnCombatComponent GetPawnCombatComponent()

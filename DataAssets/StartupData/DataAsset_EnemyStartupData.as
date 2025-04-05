@@ -3,7 +3,7 @@ class UDataAsset_EnemyStartupData : UDataAsset_StartupDataBase
 	UPROPERTY(Category = "StartupData")
 	TArray<TSubclassOf<UWarriorEnemyGameplayAbility>> EnemyStartupAbilities;
 
-	void GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent InWarriorAbilitySystem, int32 ApplyLevel = 1) override
+	void GiveToAbilitySystemComponent(UAngelscriptAbilitySystemComponent InWarriorAbilitySystem, int32 ApplyLevel = 1) override
 	{
 		Super::GiveToAbilitySystemComponent(InWarriorAbilitySystem, ApplyLevel);
 

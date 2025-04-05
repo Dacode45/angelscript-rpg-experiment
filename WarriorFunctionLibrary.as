@@ -2,14 +2,14 @@ namespace WarriorFunctionLibrary
 {
 
 	UFUNCTION(Category = "Warrior|FunctionLibrary")
-	UWarriorAbilitySystemComponent GetWarriorAbilitySystemComponentFromActor(AActor InActor)
+	UAngelscriptAbilitySystemComponent GetWarriorAbilitySystemComponentFromActor(AActor InActor)
 	{
-		return UWarriorAbilitySystemComponent::Get(InActor);
+		return UAngelscriptAbilitySystemComponent::Get(InActor);
 	}
 
 	UFUNCTION(Category = "Warrior|FunctionLibrary")
 	void AddGameplayTagToActorIfNone(AActor InActor, FGameplayTag TagToAdd) {
-		UWarriorAbilitySystemComponent ASC = GetWarriorAbilitySystemComponentFromActor(InActor);
+		UAngelscriptAbilitySystemComponent ASC = GetWarriorAbilitySystemComponentFromActor(InActor);
 
 		if (ASC.HasGameplayTag(TagToAdd))
 			return;
@@ -19,7 +19,7 @@ namespace WarriorFunctionLibrary
 
 	UFUNCTION(Category = "Warrior|FunctionLibrary")
 	void RemoveGameplayTagToActorIfFound(AActor InActor, FGameplayTag TagToRemove) {
-		UWarriorAbilitySystemComponent ASC = GetWarriorAbilitySystemComponentFromActor(InActor);
+		UAngelscriptAbilitySystemComponent ASC = GetWarriorAbilitySystemComponentFromActor(InActor);
 
 		if (!ASC.HasGameplayTag(TagToRemove))
 			return;
@@ -28,7 +28,7 @@ namespace WarriorFunctionLibrary
 	}
 
 	bool NativeDoesActorHaveTag(AActor InActor, FGameplayTag TagToCheck) {
-		UWarriorAbilitySystemComponent ASC = GetWarriorAbilitySystemComponentFromActor(InActor);
+		UAngelscriptAbilitySystemComponent ASC = GetWarriorAbilitySystemComponentFromActor(InActor);
 
 		return ASC.HasGameplayTag(TagToCheck);
 	}

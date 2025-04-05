@@ -9,7 +9,7 @@ class UDataAsset_StartupDataBase : UDataAsset
 	UPROPERTY(EditDefaultsOnly, Category = "StartupData")
 	TArray<TSubclassOf<UGameplayEffect>> StartupGameplayEffects;
 
-	void GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent InWarriorAbilitySystem, int32 ApplyLevel = 1) {
+	void GiveToAbilitySystemComponent(UAngelscriptAbilitySystemComponent InWarriorAbilitySystem, int32 ApplyLevel = 1) {
 		check(InWarriorAbilitySystem != nullptr);
 
 		GrantAbility(ActivateOnGivenAbilities, InWarriorAbilitySystem, ApplyLevel);
@@ -18,13 +18,16 @@ class UDataAsset_StartupDataBase : UDataAsset
 		if (StartupGameplayEffects.IsEmpty())
 			return;
 
-		for (auto EffectClass : StartupGameplayEffects)
+		for (TSubclassOf<UGameplayEffect> EffectClass : StartupGameplayEffects)
 		{
-			InWarriorAbilitySystem.ApplyGameplayEffectToSelf(EffectClass, ApplyLevel, InWarriorAbilitySystem.MakeEffectContext());
+			check(EffectClass != nullptr);
+			InWarriorAbilitySystem.ApplyGameplayEffectToTarget(EffectClass.DefaultObject.Class, InWarriorAbilitySystem, ApplyLevel, InWarriorAbilitySystem.MakeEffectContext());
+
+			// InWarriorAbilitySystem.ApplyGameplayEffectToSelf(EffectClass, ApplyLevel, InWarriorAbilitySystem.MakeEffectContext());
 		}
 	}
 
-	void GrantAbility(TArray<TSubclassOf<UWarriorGameplayAbility>> InAbilitiesToGive, UWarriorAbilitySystemComponent InWarriorAbilitySystem, int32 ApplyLevel) {
+	void GrantAbility(TArray<TSubclassOf<UWarriorGameplayAbility>> InAbilitiesToGive, UAngelscriptAbilitySystemComponent InWarriorAbilitySystem, int32 ApplyLevel) {
 		if (InAbilitiesToGive.IsEmpty())
 		{
 			return;

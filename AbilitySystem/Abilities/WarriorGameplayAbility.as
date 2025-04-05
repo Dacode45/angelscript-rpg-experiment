@@ -10,18 +10,6 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 	UPROPERTY()
 	EWarriorAbilityActivationPolicy ActivationPolicy = EWarriorAbilityActivationPolicy::OnGiven;
 
-	// UFUNCTION(BlueprintOverride)
-	// void OnEndAbility(bool bWasCancelled)
-	// {
-	// 	if (ActivationPolicy == EWarriorAbilityActivationPolicy::OnGiven)
-	// 	{
-	// 		ActorInfo.AbilitySystemComponent.ClearAbility();
-	// 	}
-	// }
-
-	// UFUNCTION(BlueprintOverride)
-	// void OnEndAbility(FGameplayAbilitySpecHandle AH, FGameplayAbilityActorInfo AI, FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-
 	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
 	UPawnCombatComponent GetPawnCombatComponent() {
 		return UPawnCombatComponent::Get(ActorInfo.AvatarActor);
@@ -34,12 +22,15 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 
 	// Helpers
 	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
-	UWarriorAbilitySystemComponent GetWarriorAbilitySystemComponentFromActorInfo() {
-		return Cast<UWarriorAbilitySystemComponent>(ActorInfo.AbilitySystemComponent);
+	UAngelscriptAbilitySystemComponent GetWarriorAbilitySystemComponentFromActorInfo() {
+		return Cast<UAngelscriptAbilitySystemComponent>(ActorInfo.AbilitySystemComponent);
 	}
 
 	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor TargetActor, FGameplayEffectSpecHandle InSpecHandle) {
 		UAbilitySystemComponent TargetASC = AbilitySystem::GetAbilitySystemComponent(TargetActor);
+
+		if (TargetASC == nullptr)
+			return FActiveGameplayEffectHandle();
 
 		check(TargetASC != nullptr);
 		check(InSpecHandle.IsValid());
@@ -53,7 +44,7 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 	FActiveGameplayEffectHandle BP_ApplyEffectSpecHandleToTarget(AActor TargetActor, FGameplayEffectSpecHandle InSpecHandle, EWarriorSuccessType&out OutSuccesstype) {
 		FActiveGameplayEffectHandle Handle = NativeApplyEffectSpecHandleToTarget(TargetActor, InSpecHandle);
 
-		OutSuccesstype = Handle.WasSuccessfullyApplied() ? EWarriorSuccessType::Failed : EWarriorSuccessType::Success;
+		OutSuccesstype = Handle.WasSuccessfullyApplied() ? EWarriorSuccessType::Success : EWarriorSuccessType::Failed;
 
 		return Handle;
 	}

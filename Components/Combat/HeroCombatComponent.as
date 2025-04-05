@@ -14,6 +14,7 @@ class UHeroCombatComponent : UPawnCombatComponent
 	float32 GetHeroCurrentEquippedWeaponDmageAtLevel(float InLevel)
 	{
 		FScalableFloat f = GetCurrentEquippedHeroWeapon().HeroWeaponData.WeaponBaseDamage;
+		Debug::Print(f"Found curve, {f.Curve.RowName}");
 		return f.GetValueAtLevel(InLevel);
 	}
 

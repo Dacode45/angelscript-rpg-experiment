@@ -1,30 +1,40 @@
 class UWarriorAttributeSet : UAngelscriptAttributeSet
 {
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	UPROPERTY(BlueprintReadWrite, Category = "Health")
 	FAngelscriptGameplayAttributeData CurrentHealth;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	UPROPERTY(BlueprintReadWrite, Category = "Health")
 	FAngelscriptGameplayAttributeData MaxHealth;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Rage")
+	UPROPERTY(BlueprintReadWrite, Category = "Rage")
 	FAngelscriptGameplayAttributeData CurrentRage;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Rage")
+	UPROPERTY(BlueprintReadWrite, Category = "Rage")
 	FAngelscriptGameplayAttributeData MaxRage;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	FAngelscriptGameplayAttributeData AttackPower;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	FAngelscriptGameplayAttributeData DefensePower;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	FAngelscriptGameplayAttributeData DamageTaken;
 
-	default CurrentHealth.Initialize(1.f);
-	default MaxHealth.Initialize(1.f);
-	default CurrentRage.Initialize(1.f);
-	default MaxRage.Initialize(1.f);
-	default AttackPower.Initialize(1.f);
-	default DefensePower.Initialize(1.f);
+	UWarriorAttributeSet()
+	{
+		CurrentHealth.Initialize(1.f);
+		MaxHealth.Initialize(1.f);
+		CurrentRage.Initialize(1.f);
+		MaxRage.Initialize(1.f);
+		AttackPower.Initialize(1.f);
+		DefensePower.Initialize(1.f);
+		DamageTaken.Initialize(0.f);
+	}
+
+	// UFUNCTION(BlueprintOverride)
+	// void PreAttributeChange(FGameplayAttribute Attribute, float32& NewValue)
+	// {
+	// 	Debug::Print(f"Attribute Changing {Attribute.AttributeName}");
+	// }
 }
