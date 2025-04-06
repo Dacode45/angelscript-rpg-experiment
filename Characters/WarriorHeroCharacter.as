@@ -12,6 +12,9 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 	UPROPERTY(DefaultComponent, VisibleDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	UHeroCombatComponent CombatComponent;
 
+	UPROPERTY(DefaultComponent, Category = "UI")
+	UHeroUIComponent HeroUIComponent;
+
 	default CameraBoom.TargetArmLength = 200.0f;
 	default CameraBoom.SocketOffset = FVector(0.f, 55.f, 65.f);
 	default CameraBoom.bUsePawnControlRotation = true;
@@ -135,5 +138,15 @@ class AWarriorHeroCharacter : AWarriorBaseCharacter
 	UPawnCombatComponent GetPawnCombatComponent() override
 	{
 		return CombatComponent;
+	}
+
+	// UI
+	UPawnUIComponent GetUIComponent() override
+	{
+		return HeroUIComponent;
+	}
+	UHeroUIComponent GetHeroUIComponent() override
+	{
+		return HeroUIComponent;
 	}
 }

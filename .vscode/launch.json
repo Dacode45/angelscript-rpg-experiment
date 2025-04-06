@@ -7,14 +7,7 @@
         {
             "type": "angelscript",
             "request": "launch",
-            "name": "Debug Angelscript 27099 (Default)",
-            "port": 27099
-        },
-        {
-            "type": "angelscript",
-            "request": "launch",
-            "name": "Debug Angelscript 27100",
-            "port": 27100
+            "name": "Debug Angelscript"
         }
     ]
 }

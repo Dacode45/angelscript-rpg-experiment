@@ -28,8 +28,10 @@ class UHeroCombatComponent : UPawnCombatComponent
 		EventData.Instigator = GetOwner();
 
 		AbilitySystem::SendGameplayEventToActor(GetOwner(), GameplayTags::Shared_Event_MeleeHit, EventData);
+		AbilitySystem::SendGameplayEventToActor(GetOwner(), GameplayTags::Player_Event_HitPause, FGameplayEventData());
 	}
 
 	void OnWeaponPulledFromTarget(AActor HitActor) override {
+		AbilitySystem::SendGameplayEventToActor(GetOwner(), GameplayTags::Player_Event_HitPause, FGameplayEventData());
 	}
 };

@@ -7,9 +7,9 @@ struct FWarriorDamageCapture
 	FWarriorDamageCapture()
 	{
 		AttackPowerCaptureDefinition =
-			UAngelscriptGameplayEffectUtils::CaptureGameplayAttribute(UWarriorAttributeSet.Get(), n"AttackPower", EGameplayEffectAttributeCaptureSource::Source, false);
-		DefensePowerCaptureDefinition = UAngelscriptGameplayEffectUtils::CaptureGameplayAttribute(UWarriorAttributeSet.Get(), n"DefensePower", EGameplayEffectAttributeCaptureSource::Target, false);
-		DamageTakenCaptureDefinition = UAngelscriptGameplayEffectUtils::CaptureGameplayAttribute(UWarriorAttributeSet.Get(), n"DamageTaken", EGameplayEffectAttributeCaptureSource::Target, false);
+			UAngelscriptGameplayEffectUtils::CaptureGameplayAttribute(UWarriorAttributeSet::StaticClass(), n"AttackPower", EGameplayEffectAttributeCaptureSource::Source, false);
+		DefensePowerCaptureDefinition = UAngelscriptGameplayEffectUtils::CaptureGameplayAttribute(UWarriorAttributeSet::StaticClass(), n"DefensePower", EGameplayEffectAttributeCaptureSource::Target, false);
+		DamageTakenCaptureDefinition = UAngelscriptGameplayEffectUtils::CaptureGameplayAttribute(UWarriorAttributeSet::StaticClass(), n"DamageTaken", EGameplayEffectAttributeCaptureSource::Target, false);
 	}
 }
 
@@ -21,7 +21,7 @@ namespace DamageCaptureCalc
 class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 {
 	default RelevantAttributesToCapture.Add(
-		DamageCaptureCalc::DamageCapture.AttackPowerCaptureDefinition);
+		FWarriorDamageCapture().AttackPowerCaptureDefinition);
 
 	default RelevantAttributesToCapture.Add(
 		DamageCaptureCalc::DamageCapture.DefensePowerCaptureDefinition);
@@ -30,12 +30,9 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 		DamageCaptureCalc::DamageCapture.DamageTakenCaptureDefinition);
 
 	UFUNCTION(BlueprintOverride)
-	void Execute(FGameplayEffectCustomExecutionParameters ExecutionParams,
-				 FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+	void Execute(FGameplayEffectCustomExecutionParameters ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 	{
-		auto ascFound = ExecutionParams.TargetAbilitySystemComponent.GetAttributeSet(UWarriorAttributeSet::StaticClass());
-
-		CppDebug::Print(f"ABS { ascFound.GetName()}", FColor::Blue);
+		// CppDebug::Print(f"ABS { ExecutionParams.SourceAbilitySystemComponent.Owner.GetName()}", FColor::Red);
 
 		FGameplayEffectSpec EffectSpec = ExecutionParams.OwningSpec;
 
@@ -50,7 +47,7 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 
 		if (!AttemptResultAP)
 		{
-			CppDebug::Print(f"No Attack Power", FColor::Red);
+			// CppDebug::Print(f"No Attack Power", FColor::Red);
 		}
 
 		float BaseDamage = 0.f;
@@ -59,9 +56,9 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 
 		for (auto TagMagnitude : EffectSpec.SetByCallerTagMagnitudes)
 		{
-			// UCppDebug::Print(f"Checking tag: {TagMagnitude.Key}");
+			// CppDebug::Print(f"Checking tag: {TagMagnitude.Key}");
 
-			CppDebug::Print(f"Checking tag: {TagMagnitude.Key}", FColor::Red);
+			// CppDebug::Print(f"Checking tag: {TagMagnitude.Key}", FColor::Red);
 			if (TagMagnitude.Key.MatchesTagExact(GameplayTags::Shared_SetByCaller_BaseDamage))
 			{
 				BaseDamage = TagMagnitude.Value;
@@ -78,22 +75,24 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 			}
 		}
 
+		// CppDebug::Print(f"Light/Heavy Combos {UsedLightAttackComboCount}/{UsedHeavyAttackComboCount}", FColor::Red);
+
 		float32 TargetDefensePower = 0.f;
 		bool bAttemptResult = ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageCaptureCalc::DamageCapture.DefensePowerCaptureDefinition, EvaluateParameters, TargetDefensePower);
 		if (!bAttemptResult)
 		{
-			CppDebug::Print(f"No Defense Power", FColor::Red);
+			// CppDebug::Print(f"No Defense Power", FColor::Red);
 			TargetDefensePower = 1;
 		}
 
 		if (UsedLightAttackComboCount > 0)
 		{
-			BaseDamage *= (UsedLightAttackComboCount - 1) * 0.05 + 1.f;
+			BaseDamage *= (UsedLightAttackComboCount - 1) * 0.051 + 1.f;
 		}
 
 		if (UsedHeavyAttackComboCount > 0)
 		{
-			BaseDamage *= (UsedHeavyAttackComboCount - 1) * 0.15 + 1.f;
+			BaseDamage *= (UsedHeavyAttackComboCount - 1) * 0.151 + 1.f;
 		}
 
 		const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefensePower;
@@ -103,7 +102,7 @@ class UGEExecCalc_DamageTaken : UGameplayEffectExecutionCalculation
 			EGameplayModOp::Override,
 			FinalDamageDone);
 
-		CppDebug::Print(f"Executed: {FinalDamageDone}", FColor::Red);
+		// CppDebug::Print(f"Executed: {FinalDamageDone} = {BaseDamage} * {SourceAttackPower} / {TargetDefensePower}", FColor::Red);
 		if (FinalDamageDone > 0)
 		{
 			OutExecutionOutput.AddOutputModifier(

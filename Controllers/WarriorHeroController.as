@@ -1,4 +1,4 @@
-class AWarriorHeroController : APlayerController
+class AWarriorHeroController : AWarriorCppHeroController
 {
 	UWarriorInputComponent InputComponent;
 

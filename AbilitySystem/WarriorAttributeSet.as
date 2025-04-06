@@ -37,6 +37,8 @@ class UWarriorAttributeSet : UAngelscriptAttributeSet
 								   FGameplayModifierEvaluatedData& EvaluatedData,
 								   UAngelscriptAbilitySystemComponent AbilitySystemComponent)
 	{
+		AWarriorBaseCharacter Character = Cast<AWarriorBaseCharacter>(AbilitySystemComponent.Owner);
+		UPawnUIComponent PawnUIComponent = Character.GetUIComponent();
 
 		if (EvaluatedData.Attribute.AttributeName == UAngelscriptAttributeSet::GetGameplayAttribute(UWarriorAttributeSet, n"CurrentHealth").AttributeName)
 
@@ -45,6 +47,7 @@ class UWarriorAttributeSet : UAngelscriptAttributeSet
 			const float NewCurrentHealth = Math::Clamp(CurrentHealth.CurrentValue, 0.f, MaxHealth.CurrentValue);
 
 			CurrentHealth.SetCurrentValue(NewCurrentHealth);
+			PawnUIComponent.SetCurrentHealthChange(CurrentHealth.CurrentValue / MaxHealth.CurrentValue);
 		}
 
 		if (EvaluatedData.Attribute.AttributeName == UAngelscriptAttributeSet::GetGameplayAttribute(UWarriorAttributeSet, n"CurrentRage").AttributeName)
@@ -54,6 +57,13 @@ class UWarriorAttributeSet : UAngelscriptAttributeSet
 			const float NewCurrentRage = Math::Clamp(CurrentRage.CurrentValue, 0.f, MaxRage.CurrentValue);
 
 			CurrentRage.SetCurrentValue(NewCurrentRage);
+
+			UHeroUIComponent HeroUIComponent = Character.GetHeroUIComponent();
+			if (HeroUIComponent != nullptr)
+			{
+				Debug::Print(f"Rage {CurrentRage.CurrentValue} / {MaxRage.CurrentValue}");
+				HeroUIComponent.OnCurrentRageChanged.Broadcast(CurrentRage.CurrentValue / MaxRage.CurrentValue);
+			}
 		}
 
 		if (EvaluatedData.Attribute.AttributeName == UAngelscriptAttributeSet::GetGameplayAttribute(UWarriorAttributeSet, n"DamageTaken").AttributeName)
@@ -71,12 +81,14 @@ class UWarriorAttributeSet : UAngelscriptAttributeSet
 			Debug::Print(f"Old Health: {OldHealth}, Damage Done: {DamageDone}, NewCurrentHealth: {NewCurrentHealth}");
 
 			// TODO::Notify the UI
+			PawnUIComponent.SetCurrentHealthChange(CurrentHealth.CurrentValue / MaxHealth.CurrentValue);
 
 			// TODO::Handle character death
 
 			if (NewCurrentHealth == 0.f)
 
 			{
+				WarriorFunctionLibrary::AddGameplayTagToActorIfNone(AbilitySystemComponent.Avatar, GameplayTags::Shared_Status_Dead);
 			}
 		}
 	}

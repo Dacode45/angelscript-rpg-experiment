@@ -8,7 +8,7 @@ enum EWarriorAbilityActivationPolicy
 class UWarriorGameplayAbility : UAngelscriptGASAbility
 {
 	UPROPERTY()
-	EWarriorAbilityActivationPolicy ActivationPolicy = EWarriorAbilityActivationPolicy::OnGiven;
+	EWarriorAbilityActivationPolicy ActivationPolicy = EWarriorAbilityActivationPolicy::OnTriggered;
 
 	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
 	UPawnCombatComponent GetPawnCombatComponent() {
@@ -27,7 +27,7 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 	}
 
 	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor TargetActor, FGameplayEffectSpecHandle InSpecHandle) {
-		UAngelscriptAbilitySystemComponent TargetASC = Cast<UAngelscriptAbilitySystemComponent>(AbilitySystem::GetAbilitySystemComponent(TargetActor));
+		UAbilitySystemComponent TargetASC = AbilitySystem::GetAbilitySystemComponent(TargetActor);
 
 		if (TargetASC == nullptr)
 			return FActiveGameplayEffectHandle();
@@ -41,11 +41,11 @@ class UWarriorGameplayAbility : UAngelscriptGASAbility
 
 		// TargetASC.SetAttributeBaseValue(UWarriorAttributeSet::StaticClass(), n"CurrentHealth", 31);
 
-		return TargetASC.ApplyGameplayEffectSpecToSelf(InSpecHandle);
+		// return TargetASC.ApplyGameplayEffectSpecToSelf(InSpecHandle);
 
-		// return GetWarriorAbilitySystemComponentFromActorInfo().ApplyGameplayEffectSpecToTarget(
-		// 	InSpecHandle,
-		// 	TargetASC);
+		return GetWarriorAbilitySystemComponentFromActorInfo().ApplyGameplayEffectSpecToTarget(
+			InSpecHandle,
+			TargetASC);
 	}
 
 	UFUNCTION(Category = "Warrior|Ability", Meta = (DisplayName = "Apply Gaemplay Effect Spec Handle To Target Actor", ExpandEnumAsExecs = "OutSuccesstype"))
